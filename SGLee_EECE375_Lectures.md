@@ -64,11 +64,36 @@ endmodule
 
 (1) Verilog Coding: Basic Description -> Hierarchial Design
 * vs Computer Language
-* module : design block with i/o ports performing specific function
 
--> hides internal structure; hierarchial design (fixing, unaffecting lower level designs) available
-  * ports
-  * nets
+(2) Modules & Ports
+* module : design block with i/o ports performing specific function
+  * hides internal structure: hierarchial design (fixing, unaffecting lower level designs) available
+  * syntax for module definition (declaration keyword: ``module``)
+```
+module mod_name (inputs, outputs, ...);
+  (datatype def, assign/always statements)
+endmodule 
+```
+  * syntax for module instantiation = instance creation
+```
+mod_name M0(q[0], reg1, clk, out, ...);
+mod_name M2(.in0(q[0]), .in1(reg1), .clk(clk), .out0(out), ...);
+```
+* ports: signal interface by which a module communicates externally
+  * only shown explicitly outside a module 
+  * declaration keyword:
+  * ``input`` = conn to reg + net/ ``output`` = conn to net/ ``inout`` = conn to net
+
+(3) Data Types
+* nets: connections between hardware elements; signal values continuously driven, transmitted
+  * declaration keyword: ``wire`` (1bit)
+* registers: data storage element(=variable); retain value without driver until another value being overwritten
+  * declaration keyword: ``reg`` (1bit)
+* vectors: multiple bit nets or regs
+  * declaration keyword: ``wire/reg [high#:low#]``
+* 4 logic values:
+  * ``0`` = false / ``1`` = true / ``x`` = unknown / ``z`` = high-imp, float
+* number
 
 (2) Test Bench
 * Objectives, Advantages

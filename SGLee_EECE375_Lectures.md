@@ -65,10 +65,12 @@ endmodule
 (1) Verilog Coding: Basic Description -> Hierarchial Design
 * vs Computer Language
 
-(2) Modules & Ports
+**(2) Verilog Basics**
+
+(a) Modules & Ports
 * module : design block with i/o ports performing specific function
   * hides internal structure: hierarchial design (fixing, unaffecting lower level designs) available
-  * syntax for module definition (declaration keyword: ``module``)
+  * syntax for module description (keyword: ``module`` (encapsulated) ``endmodule``)
 ```
 module mod_name (inputs, outputs, ...);
   (datatype def, assign/always statements)
@@ -81,25 +83,46 @@ mod_name M2(.in0(q[0]), .in1(reg1), .clk(clk), .out0(out), ...);
 ```
 * ports: signal interface by which a module communicates externally
   * only shown explicitly outside a module 
-  * declaration keyword:
-  * ``input`` = conn to reg + net/ ``output`` = conn to net/ ``inout`` = conn to net
+  * declaration keyword: <br/>``input`` = conn to reg + net / ``output`` = conn to net / ``inout`` = conn to net
 
-(3) Data Types
+(b) Data Types
 * nets: connections between hardware elements; signal values continuously driven, transmitted
   * declaration keyword: ``wire`` (1bit)
 * registers: data storage element(=variable); retain value without driver until another value being overwritten
   * declaration keyword: ``reg`` (1bit)
 * vectors: multiple bit nets or regs
   * declaration keyword: ``wire/reg [high#:low#]``
+* paramters: named constant representing a value; defined at module description or instantiation
+  * declaration keyword: ``parameter``
+  * modification keyword: ``#(-val-, -val-)``
+* integer, real, time
+  * ``integer`` (32b): register datatype of storing integers; exploited for designing counters 
+  * ``real`` : constant datatype representing real numbers 
+  * ``time`` (64b) : register datatype of storing simulation time 
+
+(c) Algebraic Structure
 * 4 logic values:
   * ``0`` = false / ``1`` = true / ``x`` = unknown / ``z`` = high-imp, float
-* number
+* Numbers
+  * Syntax: (sign) (# of bits) '(radix) (number)_(number)  <br/>
+  ``2'b11`` ``12'hfff`` ``-16'd128``
+* Operators
 
-(2) Test Bench
+
+**(3) Test Bench**
+(a) Basic Config, Structure, Compoenets
 * Objectives, Advantages
 * Components
 * Module Hierarchy Config
 * Practical Considerations
+
+
+(b) DUT Statements
+
+
+(c) System Tasks
+
+(6) Test Bench
 
 **Module 7 : Verilog Modeling Combinational Logic**
 

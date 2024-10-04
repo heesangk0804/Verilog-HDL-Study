@@ -115,7 +115,7 @@ endmodule
     *  ``$realtime`` : display current simulation time in realnum
     *  ``$random`` :
   * File Operation
-    *  ``$fopen`` : 
+    *  ``$fopen`` :
     *  ``$fdisplay`` ``$fmonitor`` ``$fwrite``
     *  ``$fgets`` ``$fscanf`` ``$fread``
     *  ``$fclose``
@@ -143,15 +143,34 @@ endmodule
 mod_name M0(q[0], reg1, clk, out, ...);
 mod_name M2(.in0(q[0]), .in1(reg1), .clk(clk), .out0(out), ...);
 ```
-* ports: signal interface by which a module communicates externally; only shown explicitly outside a module 
+* ports: signal interface by which a module communicates externally; only shown explicitly outside a module
   * Declaration keyword: <br/>``input`` / ``output`` / ``inout``
-  * Connection Rules: <br/>``input``: internally as net, externally to reg or net <br/>``output``: internally as reg or net, externally to net <br/>``inout``: internally as net, externally to net
+  * Connection Rules: <br/>``input``: internally as net, externally to reg or net <br/>``output``: internally as reg or net, externally to net <br/>``inout``:internally as net, externally to net
   * Connection Styles
     * by Order: ``ADD A0(A1, B1, C1, C2, S1)``
     * by Name: ``ADD A0(.A(A1), .B(B1), .Cin(C1), .Cout(C2), .S(S1))``
 
 (b) Design Block Modeling
-* Structural Modeling (Gate-Level)
+* Structural Modeling (Gate-Level) <br/> : Design a gate-level digital system, then convert it to code by instantizing primitive gates
+  * Primitive Gates: pre-defined modules operating boolean logic operations <br/> Syntax: ``<instant_name> (<output>, <input0>, <input1>);``
+  * and/or gates: ``and`` ``or`` ``nand`` ``nor`` ``xor`` ``xnor``
+  * buf/not gates: ``not`` ``buf`` ``bufif1`` ``bufif0`` ``notif1`` ``notif0``
+  * 
+```
+module full_adder (
+   output s, cout,
+   input a, b, cin
+   );
+   wire tc0, tc1, ts0;
+
+   and g0(tc0, a, b);
+   and g1(tc1, tc0, cin);
+   xor g2(cout, tc0, tc1);
+   xor g5(ts0, a, b);
+   xor g6(s, ts0, cin);
+endmodule
+
+```
 * Dataflow Modeling (Continuous Assignment)
 * Behavioral Modeling (Procedural Assignment)
 

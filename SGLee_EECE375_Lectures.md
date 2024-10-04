@@ -14,7 +14,7 @@ Gate-Lv Design > Timing Simul > Board Implem > Testing
 
 (2) Hardware Description Language
 * Definition: Programming language for description of digital hardware
-  * Hardware inherently PARALLEL 
+  * Hardware inherently PARALLEL, CONCURRENT
 * Advantages
   * highly portable: simple text file(*.v) w/ standard language format
   * behavioral description: can describe intended behavior of circuit w/out any structural detail
@@ -65,27 +65,9 @@ endmodule
 (1) Verilog Coding: Basic Description -> Hierarchial Design
 * vs Computer Language
 
-**(2) Verilog Basics**
+(2) Verilog Basics
 
-(a) Modules & Ports
-* module : design block with i/o ports performing specific function
-  * hides internal structure: hierarchial design (fixing, unaffecting lower level designs) available
-  * syntax for module description (keyword: ``module`` (encapsulated) ``endmodule``)
-```
-module mod_name (inputs, outputs, ...);
-  (datatype def, assign/always statements)
-endmodule 
-```
-  * syntax for module instantiation = instance creation
-```
-mod_name M0(q[0], reg1, clk, out, ...);
-mod_name M2(.in0(q[0]), .in1(reg1), .clk(clk), .out0(out), ...);
-```
-* ports: signal interface by which a module communicates externally
-  * only shown explicitly outside a module 
-  * declaration keyword: <br/>``input`` = conn to reg + net / ``output`` = conn to net / ``inout`` = conn to net
-
-(b) Data Types
+(a) Data Types
 * nets: connections between hardware elements; signal values continuously driven, transmitted
   * declaration keyword: ``wire`` (1bit)
 * registers: data storage element(=variable); retain value without driver until another value being overwritten
@@ -100,37 +82,87 @@ mod_name M2(.in0(q[0]), .in1(reg1), .clk(clk), .out0(out), ...);
   * ``real`` : constant datatype representing real numbers 
   * ``time`` (64b) : register datatype of storing simulation time 
 
-(c) Algebraic Structure
+(b) Algebraic Structure
 * 4 logic values:
   * ``0`` = false / ``1`` = true / ``x`` = unknown / ``z`` = high-imp, float
 * Numbers
   * Syntax: (sign) (# of bits) '(radix) (number)_(number)  <br/>
   ``2'b11`` ``12'hfff`` ``-16'd128``
-* Operators <br/> (Example: ``A = 4'b1010 == 4'd10, B = 4'b0011 = 4'd3``)
+
+(c) Operators <br/> (Example: ``A = 4'b1010 == 4'd10, B = 4'b0011 = 4'd3``)
   * Arithmetic: <br/> ``A + B == 4'b1101``, ``A - B == 4'b0111``, ``A * B == 4'b1110``, ``A / B == 4'b0011``, ``A % B == 4'b0001``
   * Logical: Binary Operator yielding 1bit; operand == 1'b1 if nonzero, == 1'b0 if zero <br/> ``A && B == 1'b1``, ``A || B == 1'b1``, ``!A == 1'b0``
   * Relational: <br/> ``A > B == 1'b1``, ``A <(=) B == 1'b0``,
   * Equality: <br/> ``A == B == 1'b0(x if x, z)``, ``A != B == 1'b1(x if x, z)``, ``A === B == 1'b0(for x, z)``, ``A !== B == 1'b1(for x, z)``
   * Bitwise: calculate btwn bits of same position of each operands, yielding to same bit position at output <br/> ``A & B == 4'b0010``, ``A | B == 4'b1011``, ``~A == 4'b0101``, ``A ^ B == 4'b1001``, ``A ^~ B == 4'b0110``
-  * Unary Bitwise: Unary operator, calculate btwn bits among each position, yielding 1 bit <br/> ``&A == 1'b0``, ``|A == 1'b1``, ``^A == 1'b0``
+  * Reduction: Unary operator, calculate btwn bits among each position, yielding 1 bit <br/> ``&A == 1'b0``, ``|A == 1'b1``, ``^A == 1'b0``
   * Shift: shift left operand bit position by right operand number, fill in 0s <br/> ``A >> 1 == 4'b0101``, ``A << 2 == 4'b1000``
-  * Concatenate: append multiple operands into 1 vector, from left = MSB to right = LSB <br>  ``{A, B} = 8'b10100011``
+  * Concatenate: append multiple operands into 1 vector, from left = MSB to right = LSB  <br/>  ``{A, B} = 8'b10100011``
   * Replication: repetitive concatenation of operand by number outside bracket <br/> ``2{A} = 8'b10101010``
+  * Conditional: Tenary operator, evaluate logic of 1st operand -> 1: 2nd operand evaluated / 0: 3rd operand evaluated / x: 2, 3 evaluated and compared <br/>  ``(A==1): A ? B == 4'b0011``
 
-**(3) Test Bench**
-(a) Basic Config, Structure, Components
+(d) System Tasks <br/> : routine operation including displaying on screen, monitoring net values, stop & finish execution (Syntax: ``$ <keyword>``)
+  * Displaying
+    * ``$display("%b, %d, %f", p1, p2, p3, ...)`` : display strings or data in format on screen
+  * Monitoring
+    * ``$display("%b, %d, %f", p1, p2, p3, ...)`` : display strings or data on screen every time the signal data(p1, p2, p3, ...) changes
+  * Stopping and Finishing
+    *  ``$stop`` : stop, pause the simulation
+    *  ``$finish`` : terminate the simulation
+  * Simulation Time Report
+    *  ``$time`` : display current simulation time in 64b
+    *  ``$stime`` : display current simulation time in 32b
+    *  ``$realtime`` : display current simulation time in realnum
+    *  ``$random`` :
+  * File Operation
+    *  ``$fopen`` : 
+    *  ``$fdisplay`` ``$fmonitor`` ``$fwrite``
+    *  ``$fgets`` ``$fscanf`` ``$fread``
+    *  ``$fclose``
+
+(e) Compiler Directives <br/> : pre-processing tasks done before compiling, including macro define, alternate file inclusion (Syntax: `` `<keyword>``) 
+  * Macro Define
+    * `` `define <TEXT> <value>`` : define text macros to be substituted to value when being compiled
+  * Source File Inclusion
+    * `` `include <filename>`` : include other source files to this file while compiling
+  * `` `ifdef``
+  * `` `timescale``
+(3) Module, Block Design
+
+(a) Modules & Ports
+* module : design block with i/o ports performing specific function
+  * hides internal structure: hierarchial design (fixing, unaffecting lower level designs) available
+  * syntax for module description (keyword: ``module`` (encapsulated) ``endmodule``)
+```
+module mod_name (inputs, outputs, ...);
+  (datatype def, assign/always statements)
+endmodule 
+```
+  *  syntax for module instantiation = instance creation
+```
+mod_name M0(q[0], reg1, clk, out, ...);
+mod_name M2(.in0(q[0]), .in1(reg1), .clk(clk), .out0(out), ...);
+```
+* ports: signal interface by which a module communicates externally; only shown explicitly outside a module 
+  * Declaration keyword: <br/>``input`` / ``output`` / ``inout``
+  * Connection Rules: <br/>``input``: internally as net, externally to reg or net <br/>``output``: internally as reg or net, externally to net <br/>``inout``: internally as net, externally to net
+  * Connection Styles
+    * by Position
+    *  
+
+(b) Design Block Modeling
+* 
+
+
+
+(c) Test Bench(Stimulus Block) Modeling
+
+Basic Config, Structure, Components
 * Objectives, Advantages
 * Components
 * Module Hierarchy Config
 * Practical Considerations
 
-
-(b) DUT Statements
-
-
-(c) System Tasks
-
-(6) Test Bench
 
 **Module 7 : Verilog Modeling Combinational Logic**
 

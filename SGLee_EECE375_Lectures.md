@@ -147,8 +147,8 @@ mod_name M2(.in0(q[0]), .in1(reg1), .clk(clk), .out0(out), ...);
   * Declaration keyword: <br/>``input`` / ``output`` / ``inout``
   * Connection Rules: <br/>``input``: internally as net, externally to reg or net <br/>``output``: internally as reg or net, externally to net <br/>``inout``: internally as net, externally to net
   * Connection Styles
-    * by Position
-    *  
+    * by Order: ``ADD A0(A1, B1, C1, C2, S1)``
+    * by Name: ``ADD A0(.A(A1), .B(B1), .Cin(C1), .Cout(C2), .S(S1))``
 
 (b) Design Block Modeling
 * 

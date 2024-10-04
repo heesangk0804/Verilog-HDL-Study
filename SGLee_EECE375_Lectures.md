@@ -151,7 +151,9 @@ mod_name M2(.in0(q[0]), .in1(reg1), .clk(clk), .out0(out), ...);
     * by Name: ``ADD A0(.A(A1), .B(B1), .Cin(C1), .Cout(C2), .S(S1))``
 
 (b) Design Block Modeling
-* 
+* Structural Modeling (Gate-Level)
+* Dataflow Modeling (Continuous Assignment)
+* Behavioral Modeling (Procedural Assignment)
 
 
 

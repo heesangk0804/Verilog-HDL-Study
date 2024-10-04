@@ -1,6 +1,5 @@
 # Verilog HDL Manuals & Tips
-## Lecture Chapters
-**Module 5 : HDL**
+## Module 5 : HDL
 
 (1) Digital Circuit Design Flow
 
@@ -60,7 +59,7 @@ endmodule
 
 -> could be internally designd as specific CL mapping input to output
 
-**Module 6 : Verilog HDL Overview, TestBench**
+## Module 6 : Verilog HDL Overview, TestBench
 
 (1) Verilog Coding: Basic Description -> Hierarchial Design
 * vs Computer Language
@@ -127,6 +126,7 @@ endmodule
     * `` `include <filename>`` : include other source files to this file while compiling
   * `` `ifdef``
   * `` `timescale``
+
 (3) Module, Block Design
 
 (a) Modules & Ports
@@ -151,11 +151,12 @@ mod_name M2(.in0(q[0]), .in1(reg1), .clk(clk), .out0(out), ...);
     * by Name: ``ADD A0(.A(A1), .B(B1), .Cin(C1), .Cout(C2), .S(S1))``
 
 (b) Design Block Modeling
-* Structural Modeling (Gate-Level) <br/> : Design a gate-level digital system, then convert it to code by instantizing primitive gates
-  * Primitive Gates: pre-defined modules operating boolean logic operations <br/> Syntax: ``<instant_name> (<output>, <input0>, <input1>);``
+* **Structural Modeling (Gate-Level)** <br/> : Design a gate-level digital system, then convert it to code by **instantizing primitive gates**
+  * Primitive Gates: pre-defined modules operating boolean logic operations <br/> Syntax: ``<gate_name> <instant_name> (<output>, <input0>, <input1>);``
   * and/or gates: ``and`` ``or`` ``nand`` ``nor`` ``xor`` ``xnor``
   * buf/not gates: ``not`` ``buf`` ``bufif1`` ``bufif0`` ``notif1`` ``notif0``
-  * 
+  * Gate Delay: described by delay expression # <br/> ``<gate_name> #(<risetime>,<falltime>,<turnofftime>) <instant_name> (...)``, <br/>``<gate_name> #(<mindelay>:<typdelay>:<maxdelay>) <instant_name> (...)``
+  * Example Code
 ```
 module full_adder (
    output s, cout,
@@ -169,12 +170,30 @@ module full_adder (
    xor g5(ts0, a, b);
    xor g6(s, ts0, cin);
 endmodule
+```
+
+* **Dataflow Modeling (Continuous Assignment)** <br/> : Design in more abstract approach with **continuous assignment** of expressions using keyword ``assign``
+  * Continuous Assignment: concurrent assignment between nets (NOT reg); change in RHS net instantly assigned to LHS net <br/> Syntax: ``assign out = i0 & i1;``
+  * Delay: <br/> Regular: ``assign #(<td>) <LHS> = <RHS>;`` <br/> Implicit: ``wire #(<td>) <LHS> = <RHS>;`` <br/> Net Declaration: ``wire #(<td>) <LHS>; assign <LHS>  = <RHS>;``
+
+* **Behavioral Modeling (Procedural Assignment)** <br/> : Design in most abstract = sequential approach with **procedural assignment** using keyword ``intial``or ``always``
+  * Initial Statement: executed at t=0, only once, independently from other blocks <br/> Applications: initialization of registers(especially test vectors, clk, reset), system tasks
+  * Always Statement: executed repetitively every time any change of condition events or signals occur 
+  * Procedural Assignment: assignment on register or storage var; LHS var keeps data until new data overwritten <br/> * Non Blocking: sequential assignment of code lines ``b = a; c = b; a = c; \\ a == a0``  <br/> * Blocking: concurrent assignment of code lines ``b = a; c = b; a = c; \\ a == c0``
+  * Timing Control <br/> Delay-Based: ``assign #(<td>) <LHS> = <RHS>;`` <br/> Event-Based: ``wire #(<td>) <LHS> = <RHS>; <br/> Level-Sensitive
+
+  * Example Code
+```
+initial begin
+end
+
+always begin
+end
+
+
+
 
 ```
-* Dataflow Modeling (Continuous Assignment)
-* Behavioral Modeling (Procedural Assignment)
-
-
 
 (c) Test Bench(Stimulus Block) Modeling
 
@@ -185,7 +204,7 @@ Basic Config, Structure, Components
 * Practical Considerations
 
 
-**Module 7 : Verilog Modeling Combinational Logic**
+## Module 7 : Verilog Modeling Combinational Logic
 
 (1) Logic System : 4-Valued (0 / 1 / z / x)
 
@@ -195,7 +214,7 @@ Basic Config, Structure, Components
 * Test Bench
 * Priority Encoder
 
-Module 8 : Verilog Modeling State Machine
+## Module 8 : Verilog Modeling State Machine
 
 (1) Verilog Sequential Logic = always not assign
 

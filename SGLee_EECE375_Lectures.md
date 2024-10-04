@@ -106,11 +106,12 @@ mod_name M2(.in0(q[0]), .in1(reg1), .clk(clk), .out0(out), ...);
 * Numbers
   * Syntax: (sign) (# of bits) '(radix) (number)_(number)  <br/>
   ``2'b11`` ``12'hfff`` ``-16'd128``
-* Operators
+* Operators <br/> (Example: ``A = 4'b1010, B = 4'b0011``)
+  * Arithmetic: ``A + B == 4'b1101``, ``A - B == 4'b0111``, ``A * B == 4'b(1)1110`` 
 
 
 **(3) Test Bench**
-(a) Basic Config, Structure, Compoenets
+(a) Basic Config, Structure, Components
 * Objectives, Advantages
 * Components
 * Module Hierarchy Config

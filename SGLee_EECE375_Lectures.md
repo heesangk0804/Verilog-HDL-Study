@@ -106,9 +106,16 @@ mod_name M2(.in0(q[0]), .in1(reg1), .clk(clk), .out0(out), ...);
 * Numbers
   * Syntax: (sign) (# of bits) '(radix) (number)_(number)  <br/>
   ``2'b11`` ``12'hfff`` ``-16'd128``
-* Operators <br/> (Example: ``A = 4'b1010, B = 4'b0011``)
-  * Arithmetic: ``A + B == 4'b1101``, ``A - B == 4'b0111``, ``A * B == 4'b(1)1110`` 
-
+* Operators <br/> (Example: ``A = 4'b1010 == 4'd10, B = 4'b0011 = 4'd3``)
+  * Arithmetic: <br/> ``A + B == 4'b1101``, ``A - B == 4'b0111``, ``A * B == 4'b1110``, ``A / B == 4'b0011``, ``A % B == 4'b0001``
+  * Logical: Binary Operator yielding 1bit; operand == 1'b1 if nonzero, == 1'b0 if zero <br/> ``A && B == 1'b1``, ``A || B == 1'b1``, ``!A == 1'b0``
+  * Relational: <br/> ``A > B == 1'b1``, ``A <(=) B == 1'b0``,
+  * Equality: <br/> ``A == B == 1'b0(x if x, z)``, ``A != B == 1'b1(x if x, z)``, ``A === B == 1'b0(for x, z)``, ``A !== B == 1'b1(for x, z)``
+  * Bitwise: calculate btwn bits of same position of each operands, yielding to same bit position at output <br/> ``A & B == 4'b0010``, ``A | B == 4'b1011``, ``~A == 4'b0101``, ``A ^ B == 4'b1001``, ``A ^~ B == 4'b0110``
+  * Unary Bitwise: Unary operator, calculate btwn bits among each position, yielding 1 bit <br/> ``&A == 1'b0``, ``|A == 1'b1``, ``^A == 1'b0``
+  * Shift: shift left operand bit position by right operand number, fill in 0s <br/> ``A >> 1 == 4'b0101``, ``A << 2 == 4'b1000``
+  * Concatenate: append multiple operands into 1 vector, from left = MSB to right = LSB <br>  ``{A, B} = 8'b10100011``
+  * Replication: repetitive concatenation of operand by number outside bracket <br/> ``2{A} = 8'b10101010``
 
 **(3) Test Bench**
 (a) Basic Config, Structure, Components

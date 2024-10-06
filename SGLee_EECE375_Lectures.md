@@ -335,6 +335,7 @@ module tb_priority_encoder_8to3();
     #10;
     $finish;    //simulation termination
   end
+  always #1 $display("time %d : input = %b, output = %b", $time, test_line, test_encode);
 endmodule
 
 //4:2 Priority Encoder: outputs encoded index for active input line with low-to-high num priority
@@ -354,10 +355,10 @@ endmodule
 
 ## Module 8 : Verilog Modeling State Machine
 
-(1) Verilog Sequential Logic = always not assign
+(1) Verilog Sequential Logic = "always" not assign
 
 (2) Moore FSM
-* example
+* example: S0[0] 
 * testbench
 * Blocking Assignment
 

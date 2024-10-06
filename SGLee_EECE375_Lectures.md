@@ -355,6 +355,69 @@ module priority_encoder_4to2 (
 endmodule
 ```
 
+* Universal Shift Register (Behavioral Model)
+```
+module usr(
+  output reg [3:0] dout,
+  input reset_n, clk,
+  input [1:0] mode,
+  input [3:0] din 
+  );
+
+  always @(negedge reset_n or posedge clk) begin    //state assn
+    if(~reset_n)  dout <= 4'b0000;
+    else begin
+      case(mode)
+        2'b00: dout <= dout;                 //idle
+        2'b01: dout <= {din[0], dout[3:1]};  // >> 1; right shift  
+        2'b10: dout <= {dout[2:0], din[0]};  // << 1; left shift
+        2'b11: dout <= din;                  // parallel in
+      endcase
+    end
+  end
+endmodule
+```
+* Parity Checker (Behavioral Model)
+```
+`define BITWIDTH 3
+
+module parity_checker(
+  output [BITWIDTH:0] Ao, Bo, Co, Do;
+  input [BITWIDTH-1:0] Ai, Bi, Ci;
+);
+  always @ (Ai or Bi or Ci) begin
+    Ao = {Ai, ^Ai};
+    Bo = {Bi, ^Bi};
+    Co = {Ci, ^Ci};
+    Do = Ao ^ Bo ^ Co;
+  end
+endmodule
+```
+* Counter to 6
+```
+module counter(
+  input clk, reset_n, load,
+  input [3:0] data
+  output reg [3:0] count);
+  parameter MAXCOUNT 6;
+  
+  always @(negedge reset_n or posedge clk) begin
+    if (~reset_n)
+      count <= 0;
+    else if (load)
+      count <= data;
+    else if (count < MAXCOUNT)
+      count <= count + 1;
+    else
+      count <= 0;
+  end
+endmodule
+```
+
+* Seq Detector
+
+* Traffic Light Controller
+
 ## Module 8 : Verilog Modeling State Machine
 
 (1) Verilog Sequential Logic = "always" not assign

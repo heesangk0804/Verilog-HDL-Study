@@ -358,7 +358,7 @@ endmodule
 (1) Verilog Sequential Logic = "always" not assign
 
 (2) Moore FSM
-* example: S0[0] 
+* example: ![fsm_ex1](https://github.com/heesangk0804/Verilog-HDL-Study/blob/main/fsm_ex1.png)
 * testbench
 * Blocking Assignment
 
@@ -381,7 +381,7 @@ Access: press **:** key at command mode
 
 Activity: able to save the text file or quit editor
 
-![vi_editor_structure](https://github.com/heesangk0804/Linux/assets/149554144/6db62260-f117-4147-aa02-8f6a803e071b)
+![vi_editor_structure](https://github.com/heesangk0804/Verilog-HDL-Study/blob/main/fsm_ex1.png)
 
 ## vi Commands
 

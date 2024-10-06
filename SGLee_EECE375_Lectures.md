@@ -73,7 +73,7 @@ endmodule
   * declaration keyword: ``reg`` (1bit)
 * vectors: multiple bit nets or regs
   * declaration keyword: ``wire/reg [high#:low#]``
-* paramters: named constant representing a value; defined at module description or instantiation
+* paramters: named resettable constant representing a value; defined at module description or instantiation
   * declaration keyword: ``parameter``
   * modification keyword: ``#(-val-, -val-)``
 * integer, real, time
@@ -196,7 +196,41 @@ endmodule
   * Initial Statement: executed at t=0, only once, independently from other blocks <br/> Applications: initialization of registers(especially test vectors, clk, reset), system tasks
   * Always Statement: executed repetitively every time any change of condition events or signals occur 
   * Procedural Assignment: assignment on register or storage var; LHS var keeps data until new data overwritten <br/> * Non Blocking: sequential assignment of code lines ``b = a; c = b; a = c; \\ a == a0``  <br/> * Blocking: concurrent assignment of code lines ``b = a; c = b; a = c; \\ a == c0``
-  * Timing Control <br/> Delay-Based: ``assign #(<td>) <LHS> = <RHS>;`` <br/> Event-Based: ``wire #(<td>) <LHS> = <RHS>; <br/> Level-Sensitive
+  * Timing Control <br/> Delay-Based: ``always begin #(<td>) ... `` <br/> Event-Based: ``always @(posedge clk) ``(regular) ``always @(reset or enable)``(event) <br/> Level-Sensitive: ``wait(enable)``
+  * Conditional Statements: <br/> ``if(<condition>) <true_statement>; else if(<condition>) <true_statement2>; else <false_statement>;``  <br/> ``case(<condition>) <N'bXX> : <state1>; <N'bXX> : <state2>; default: <state3> endcase;`` <br/> ``casez``: ``z``-> ``dc``, ``casex``: ``x, z``-> ``dc``
+  * Loop Statements: <br/> ``while(<condition>)`` <br/>``for(cnt=1; cnt<MAX; cnt=cnt+1)`` <br/> ``repeat(<N>)``<br/>``forever``
+  * Tasks <br/>: called in module, used for procedure containing delays/timing/event constructs, no return but multiple output ports, no internal nets
+```
+module <>;
+...
+<task_name>;
+...
+endmodule
+
+task <task_name>;
+output [WO:0] o0, o1, ...;
+input [WI:0] i0, i1, ...;
+begin
+  #<td0> o0 = <expression0>;
+  #<td1> o1 = <expression1>;
+end
+endtask
+```
+*  * Functions <br/>: called in module, used for procedures with purely CL(no procedural), executing in zero time, 1 or more input, single return no output port, no internal nets
+```
+module <>;
+...
+reg0 = <func_name>;
+...
+endmodule
+
+function <func_name>;
+input [WI:0] i0, i1, ...;
+begin
+  <func_name> = <expression>;
+end
+endfunction
+```
 
   * Example Code
 ```
@@ -205,29 +239,52 @@ end
 
 always begin
 end
+
+always @(<condition>) begin
+end
 ```
 
-(c) Test Bench(Stimulus Block) Modeling <br/>: stimulus block; generate test vector input signals and check DUT operation by flowing signals into DUT
+(c) Test Bench(Stimulus Block) Modeling <br/>: stimulus block; (1)generate test vector input signals and (3)check DUT operation, output by (2)flowing signals into DUT
 * Objectives
   * Test functionality of DUT
   * Test manufacturing defects
 * Form: written in same manner as Verilog module
   * Advantages: Portable, Reproducible, Compatible 
 * Components
-  *  
+  * Test Vector Generator: define test vector signal storage, generate vectors using behavioral code(``initial``, ``always`` statement)
+  * Device Under Test: Instantize, connect input&output ports with test vector signals
+  * Test Result Checker(optional): functions, tasks for checking output, involving system tasks(``display``, ``monitor``)
 * Module Hierarchy Config
 * Practical Considerations
 
 
 ## Module 7 : Verilog Modeling Combinational Logic
 
-(1) Logic System : 4-Valued (0 / 1 / z / x)
-
+(1) 4-Valued Logic System
 (2) Code Examples
-* mux
-* Full Adder
-* Test Bench
-* Priority Encoder
+* 2:1 MUX <br/> structural design
+```
+module tb_mux2to1():
+
+
+module mux2to1(
+  output o0;
+  input i0, i1, sel;
+  );
+  //o0 = or(and((sel)',io), and(sel, i1)) = nand(nand((sel)',io), nand(sel, i1))
+
+  wire nsel, mt0, mt0;
+
+  not g1(nsel, sel);
+  nand g2(mt0, i0, nsel);
+  nand g3(mt1, i1, sel);
+  nand g4(o0, mt0, mt1);
+endmodule
+```
+* 1-bit Full Adder
+
+
+* 8:3 Priority Encoder
 
 ## Module 8 : Verilog Modeling State Machine
 

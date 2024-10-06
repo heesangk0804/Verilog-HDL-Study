@@ -98,7 +98,7 @@ endmodule
   * Shift: shift left operand bit position by right operand number, fill in 0s <br/> ``A >> 1 == 4'b0101``, ``A << 2 == 4'b1000``
   * Concatenate: append multiple operands into 1 vector, from left = MSB to right = LSB  <br/>  ``{A, B} = 8'b10100011``
   * Replication: repetitive concatenation of operand by number outside bracket <br/> ``2{A} = 8'b10101010``
-  * Conditional: Tenary operator, evaluate logic of 1st operand -> 1: 2nd operand evaluated / 0: 3rd operand evaluated / x: 2, 3 evaluated and compared <br/>  ``(A==1): A ? B == 4'b0011``
+  * Conditional: Tenary operator, evaluate logic of 1st operand -> 1: 2nd operand evaluated / 0: 3rd operand evaluated / x: 2, 3 evaluated and compared <br/>  ``(A==1): A ? B; == 4'b0011``
 
 (d) System Tasks <br/> : routine operation including displaying on screen, monitoring net values, stop & finish execution (Syntax: ``$ <keyword>``)
   * Displaying
@@ -121,11 +121,13 @@ endmodule
 
 (e) Compiler Directives <br/> : pre-processing tasks done before compiling, including macro define, alternate file inclusion (Syntax: `` `<keyword>``) 
   * Macro Define
-    * `` `define <TEXT> <value>`` : define text macros to be substituted to value when being compiled
+    * `` `define <TEXT> <value> ... `<TEXT>`` : define text macros to be substituted to value when being compiled
   * Source File Inclusion
     * `` `include <filename>`` : include other source files to this file while compiling
-  * `` `ifdef``
-  * `` `timescale``
+  * Conditional Compile
+    * `` `ifdef <TEXT> <statement> ... `endif`` : compile the statement only if flag(<TEXT>) is set(defined)
+  * Time Scaling
+    * `` `timescale <reftime_unit>/<time_precision>`` : denote time delay unit for simulation
 
 (3) Module, Block Design
 
@@ -358,8 +360,92 @@ endmodule
 (1) Verilog Sequential Logic = "always" not assign
 
 (2) Moore FSM
-* example: ![fsm_ex1](https://github.com/heesangk0804/Verilog-HDL-Study/blob/main/fsm_ex1.png)
+* fsm ex1: ![fsm_ex1](https://github.com/heesangk0804/Verilog-HDL-Study/blob/main/fsm_ex1.png)
+```
+`define STATE_BITS 2
+`define S0 2'b00
+`define S1 2'b01
+`define S2 2'b10
+
+module fsm_ex1(
+  output reg out,
+  output reg [`STATE_BITS-1:0] state;
+  input reset_n, clk, in
+  );
+
+  always @(state) begin    //output assn in Moore
+    case(state)
+      `S0 : out <= 0;
+      `S1 : out <= 0;
+      `S2 : out <= 1;
+      default : out <= x;
+    endcase
+
+  always @(negedge reset_n or posedge clk) begin    //state assn
+    if(~reset_n)  state <= `S0;
+    else begin
+      case(state)
+        `S0 : in ? (state <= `S1) : (state <= `S2) ; 
+        `S1 : in ? : (state <= `S2) ; 
+        `S2 : state <= `S0;
+        default : state <= 2'bxx;
+      endcase
+    end
+  end
+endmodule
+```
 * testbench
+```
+`timescale 100ps/10ps
+`define CLKPER 100    //clk period
+`define STATE_BITS 2
+`define S0 ... S2 2'b10
+
+module tb_fsm_ex1();
+  wire out;  wire [STATE_BITS-1:0] cur_state; // output, state conn. to DUT
+  reg reset_n, clk, in;  integer error_cnt;
+  
+  fsm_ex1 M0 (out, state, reset_n, clk, in); // IO port connection at DUT
+
+  // clk, errorcnt initializing + reset pulse generation
+  initial begin
+    clk = 0;  error_cnt = 0;  reset_n = 1;
+    #(`CLKPER / 4) reset_n = 0;  //generate negedge reset_n pulse
+    #(`CLKPER / 2) reset_n = 1;
+  end
+
+  // clk, errorcnt initializing + reset pulse generation  
+  always #(`CLKoER / 2)  clk = ~clk;
+
+  // error checking task
+  task error_check;
+    input[`STATE_BITS-1:0] exp_state, act_state;
+    input[`STATE_BITS-1:0] exp_out, act_out;
+    begin
+      if((act_state !== exp_state) || (act_out !== exp_out)) begin
+        error_cnt = error_cnt + 1;
+        $display("Error: state = %b, output = %b at time = %t", act_state, act_out, $time);
+      end
+    end
+  endtask
+
+  // test vector generation for input + error check task call
+  initial begin
+    $display("Start Simulation");
+    in = 0;  #(`CLKPER);  error_check(`S0, state, 1'b0, out);
+    in = 0;  #(`CLKPER);  error_check(`S2, state, 1'b1, out);
+    in = 1;  #(`CLKPER);  error_check(`S0, state, 1'b0, out);
+    in = 1;  #(`CLKPER);  error_check(`S1, state, 1'b0, out);
+    in = 1;  #(`CLKPER);  error_check(`S1, state, 1'b0, out);
+    in = 0;  #(`CLKPER);  error_check(`S2, state, 1'b1, out);
+    #(`CLKPER);
+    if(!error_cnt)  $display("No Error occured during Simulation);
+    else  $display("Total %d Errors occured, error_cnt);
+    $finish;
+  end
+endmodule
+```
+
 * Blocking Assignment
 
 (3) Mealy FSM

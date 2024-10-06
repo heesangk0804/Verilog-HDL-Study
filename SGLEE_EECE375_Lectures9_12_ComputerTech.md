@@ -27,6 +27,7 @@
 
 (1) clock
 
+$\sqrt2
  
 (2) Derivation of Execution Time by CPI
 

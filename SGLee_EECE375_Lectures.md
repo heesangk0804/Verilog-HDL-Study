@@ -359,7 +359,7 @@ endmodule
 
 (1) Verilog Sequential Logic = "always" not assign
 
-(2) Moore FSM
+(2) Moore FSM <br/> structure: (state macro define) - (output always) - (state transition always) 
 * fsm ex1: ![fsm_ex1](https://github.com/heesangk0804/Verilog-HDL-Study/blob/main/fsm_ex1.png)
 ```
 `define STATE_BITS 2
@@ -448,8 +448,41 @@ endmodule
 
 * Blocking Assignment
 
-(3) Mealy FSM
+(3) Mealy FSM <br/> structure: (state macro define) - (output always = **conditional**) - (state transition always) 
+* fsm ex2: ![fsm_ex2](https://github.com/heesangk0804/Verilog-HDL-Study/blob/main/fsm_ex1.png)
+```
+`define STATE_BITS 2
+`define S0 2'b00
+`define S1 2'b01
+`define S2 2'b10
 
+module fsm_ex1(
+  output reg out,
+  output reg [`STATE_BITS-1:0] state;
+  input reset_n, clk, in
+  );
+
+  always @(state) begin    //output assn in Moore
+    case(state)
+      `S0 : out <= 0;
+      `S1 : out <= 0;
+      `S2 : out <= 1;
+      default : out <= x;
+    endcase
+
+  always @(negedge reset_n or posedge clk) begin    //state assn
+    if(~reset_n)  state <= `S0;
+    else begin
+      case(state)
+        `S0 : in ? (state <= `S1) : (state <= `S2) ; 
+        `S1 : in ? : (state <= `S2) ; 
+        `S2 : state <= `S0;
+        default : state <= 2'bxx;
+      endcase
+    end
+  end
+endmodule
+```
 
 **2. Insert Mode**
 

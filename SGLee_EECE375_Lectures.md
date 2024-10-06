@@ -449,7 +449,7 @@ endmodule
 * Blocking Assignment
 
 (3) Mealy FSM <br/> structure: (state macro define) - (output always = **conditional**) - (state transition always) 
-* fsm ex2: ![fsm_ex2](https://github.com/heesangk0804/Verilog-HDL-Study/blob/main/fsm_ex1.png)
+* fsm ex2: ![fsm_ex2](https://github.com/heesangk0804/Verilog-HDL-Study/blob/main/fsm_ex2.png)
 ```
 `define STATE_BITS 2
 `define S0 2'b00
@@ -464,9 +464,9 @@ module fsm_ex1(
 
   always @(state) begin    //output assn in Moore
     case(state)
-      `S0 : out <= 0;
+      `S0 : in? out <= 1 : out <= 0; 
       `S1 : out <= 0;
-      `S2 : out <= 1;
+      `S2 : in? out <= 0 : out <= 1;
       default : out <= x;
     endcase
 

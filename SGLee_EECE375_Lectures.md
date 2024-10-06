@@ -318,29 +318,37 @@ module full_adder (
 endmodule
 ```
 
-* 8:3 Priority Encoder
+* 4:2 Priority Encoder (behavioral modeling)
 ```
 `timescale 100ps/10ps
 module tb_priority_encoder_8to3();
-  wire sum, cout; reg in0, in1, cin; // IO declare for test vector signals conn. to DUT
-  
-  mux2to1 M0 (.s(sum), .co(cout), .a(in0), .b(in1), .ci(cin)); // IO port connection at DUT
+  wire [1:0] test_encode; reg [3:0] test_line; // IO declare for test vector signals conn. to DUT
+
+  priority_encoder_8to3 M0 (test_encode, test_line); // IO port connection at DUT
   
   initial begin // input test vector waveform generation
-    in0 = 1’b0;  in1 = 1’b0;  cin = 1’b0;        // (0,0,0)
-    #10;  cin = 1’b1;                            // (0,0,1)
-    #10;  in1 = 1’b1;                            // (0,1,1)
-    #10;  in1 = 1’b1;  in1 = 1’b0;  cin = 1’b0;  // (1,0,0)
+    test_line = 4’b0000;
+    #10; test_line = 4’b0100;
+    #10; test_line = 4’b0110;
+    #10; test_line = 4’b0010;
+    #10; test_line = 4’b1011;
     #10;
     $finish;    //simulation termination
   end
 endmodule
 
-module priority_encoder_8to3 (
-  output s, co,
-  input a, b, ci
+//4:2 Priority Encoder: outputs encoded index for active input line with low-to-high num priority
+module priority_encoder_4to2 (
+  output reg [1:0] encode, input [3:0] line
   );
-  assign {co, s} = a + b + ci; //arithmetic expression
+  always @ (line) begin
+    casex (line)
+      4'b1xxx : encoded = 2'b00;
+      4'b01xx : encoded = 2'b01;
+      4'b001x : encoded = 2'b10;
+      default : encoded = 2'b11;
+    endcase
+  end
 endmodule
 ```
 

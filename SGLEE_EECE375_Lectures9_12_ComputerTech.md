@@ -1,25 +1,35 @@
 # Verilog HDL Manuals & Tips
-## Module 5 : HDL
+## Module 9 : Computer Terminology I
 
-(1) Digital Circuit Design Flow
+(1) IC = Chip, CPU = Core, MPU/MCU
 
-: Design Spec > High-Level Design > Testbench Development > Behavioral Simul \>
+(2) IC Fabrication
 
-                  (          Verilog HDL Coding       )
-                
-Gate-Lv Design > Timing Simul > Board Implem > Testing
+(3) Basic Computer Structure
 
-     (   Netlist Synthesis   )
+## Module 10 : Computer Terminology II
 
-(2) Hardware Description Language
-* Definition: Programming language for description of digital hardware
-  * Hardware inherently PARALLEL, CONCURRENT
-* Advantages
-  * highly portable: simple text file(*.v) w/ standard language format
-  * behavioral description: can describe intended behavior of circuit w/out any structural detail
-  * automatic synthesis: HDL code synthesized to “automatically” produce circuits; less human errors
-  * portable for testing: test bench also written using HDL, compatibility and portability
-* Methods
-  * Behavioral: Procedural description of actual operation (pseudocode descript)
-  
-  -> best for synthesis! 
+(1) Classes of Computers
+
+(2) Computing Styles
+
+(3) Computer Device Data Capacities
+
+(4) Computer Components
+
+## Module 11 : Performance Metric
+
+(1) Execution Time vs Throughput
+
+(2) Peak performance vs Benchmark Performance
+
+## Module 9 : Clocking & CPI
+
+(1) clock
+
+ 
+(2) Derivation of Execution Time by CPI
+
+ 
+(3) CPI + examples
+ 

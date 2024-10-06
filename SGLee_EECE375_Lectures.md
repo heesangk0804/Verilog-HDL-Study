@@ -138,6 +138,7 @@ module mod_name (inputs, outputs, ...);
   (datatype def, assign/always statements)
 endmodule 
 ```
+*
   *  syntax for module instantiation = instance creation
 ```
 mod_name M0(q[0], reg1, clk, out, ...);
@@ -155,26 +156,41 @@ mod_name M2(.in0(q[0]), .in1(reg1), .clk(clk), .out0(out), ...);
   * Primitive Gates: pre-defined modules operating boolean logic operations <br/> Syntax: ``<gate_name> <instant_name> (<output>, <input0>, <input1>);``
   * and/or gates: ``and`` ``or`` ``nand`` ``nor`` ``xor`` ``xnor``
   * buf/not gates: ``not`` ``buf`` ``bufif1`` ``bufif0`` ``notif1`` ``notif0``
-  * Gate Delay: described by delay expression # <br/> ``<gate_name> #(<risetime>,<falltime>,<turnofftime>) <instant_name> (...)``, <br/>``<gate_name> #(<mindelay>:<typdelay>:<maxdelay>) <instant_name> (...)``
+  * Gate Delay: described by delay operator # <br/> ``<gate_name> #(<risetime>,<falltime>,<turnofftime>) <instant_name> (...)``, <br/>``<gate_name> #(<mindelay>:<typdelay>:<maxdelay>) <instant_name> (...)``
   * Example Code
 ```
 module full_adder (
-   output s, cout,
-   input a, b, cin
-   );
-   wire tc0, tc1, ts0;
+  output s, cout,
+  input a, b, cin
+  );
+  wire tc0, tc1, ts0;
 
-   and g0(tc0, a, b);
-   and g1(tc1, tc0, cin);
-   xor g2(cout, tc0, tc1);
-   xor g5(ts0, a, b);
-   xor g6(s, ts0, cin);
+  and g0(tc0, a, b);
+  xor g1(ts0, a, b);
+  
+  and g2(tc1, ts0, cin);
+  xor g3(cout, tc0, tc1);
+  xor g4(s, ts0, cin);
 endmodule
 ```
 
 * **Dataflow Modeling (Continuous Assignment)** <br/> : Design in more abstract approach with **continuous assignment** of expressions using keyword ``assign``
   * Continuous Assignment: concurrent assignment between nets (NOT reg); change in RHS net instantly assigned to LHS net <br/> Syntax: ``assign out = i0 & i1;``
   * Delay: <br/> Regular: ``assign #(<td>) <LHS> = <RHS>;`` <br/> Implicit: ``wire #(<td>) <LHS> = <RHS>;`` <br/> Net Declaration: ``wire #(<td>) <LHS>; assign <LHS>  = <RHS>;``
+  * Example Code
+```
+module full_adder (
+   output s, cout,  //net
+   input a, b, cin  //net
+   );
+  ///logic expression
+  assign s = a ^ b ^ cin;
+  assign cout = (a & b) | (b & c) | (c & a);
+  ///
+  assign {cout, s} = a + b + c; //arithmetic expression
+endmodule
+```
+
 
 * **Behavioral Modeling (Procedural Assignment)** <br/> : Design in most abstract = sequential approach with **procedural assignment** using keyword ``intial``or ``always``
   * Initial Statement: executed at t=0, only once, independently from other blocks <br/> Applications: initialization of registers(especially test vectors, clk, reset), system tasks
@@ -189,17 +205,16 @@ end
 
 always begin
 end
-
-
-
-
 ```
 
-(c) Test Bench(Stimulus Block) Modeling
-
-Basic Config, Structure, Components
-* Objectives, Advantages
+(c) Test Bench(Stimulus Block) Modeling <br/>: stimulus block; generate test vector input signals and check DUT operation by flowing signals into DUT
+* Objectives
+  * Test functionality of DUT
+  * Test manufacturing defects
+* Form: written in same manner as Verilog module
+  * Advantages: Portable, Reproducible, Compatible 
 * Components
+  *  
 * Module Hierarchy Config
 * Practical Considerations
 

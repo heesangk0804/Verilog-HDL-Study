@@ -252,7 +252,7 @@ end
   * Advantages: Portable, Reproducible, Compatible 
 * Components
   * Test Vector Generator: define test vector signal storage, generate vectors using behavioral code(``initial``, ``always`` statement)
-  * Device Under Test: Instantize, connect input&output ports with test vector signals
+  * Device Under Test(DUT): Instantize, connect input&output ports with test vector signals
   * Test Result Checker(optional): functions, tasks for checking output, involving system tasks(``display``, ``monitor``)
 * Module Hierarchy Config
 * Practical Considerations
@@ -262,10 +262,21 @@ end
 
 (1) 4-Valued Logic System
 (2) Code Examples
-* 2:1 MUX <br/> structural design
+* 2:1 MUX (structural design)
 ```
-module tb_mux2to1():
-
+`timescale 100ps/10ps   // 1 time unit = 100ps, precision = 10ps
+module tb_mux2to1();
+  wire out0; reg in0, in1, sel; // IO declare for test vector signals conn. to DUT
+  
+  mux2to1 M0 (out0, in0, in1, sel); // IO port connection at DUT
+  
+  initial begin // input test vector waveform generation
+    in0 = 1’b0;  in1 = 1’b0;  sel = 1’b0;  // (0,0,0)
+    #40;  in0 = 1’b1;                      // (1,0,0)
+    #40;  sel = 1’b1;                      // (1,0,1)
+    #40;  in1 = 1’b1; #40;                 // (1,1,1)
+  end
+endmodule
 
 module mux2to1(
   output o0;
@@ -281,10 +292,57 @@ module mux2to1(
   nand g4(o0, mt0, mt1);
 endmodule
 ```
-* 1-bit Full Adder
+* 1-bit Full Adder (dataflow modeling)
+```
+`timescale 100ps/10ps
+module tb_full_adder();
+  wire sum, cout; reg in0, in1, cin; // IO declare for test vector signals conn. to DUT
+  
+  full_adder M0 (.s(sum), .co(cout), .a(in0), .b(in1), .ci(cin)); // IO port connection at DUT
+  
+  initial begin // input test vector waveform generation
+    in0 = 1’b0;  in1 = 1’b0;  cin = 1’b0;        // (0,0,0)
+    #10;  cin = 1’b1;                            // (0,0,1)
+    #10;  in1 = 1’b1;                            // (0,1,1)
+    #10;  in1 = 1’b1;  in1 = 1’b0;  cin = 1’b0;  // (1,0,0)
+    #10;
+    $finish;    //simulation termination
+  end
+endmodule
 
+module full_adder (
+  output s, co,
+  input a, b, ci
+  );
+  assign {co, s} = a + b + ci; //arithmetic expression
+endmodule
+```
 
 * 8:3 Priority Encoder
+```
+`timescale 100ps/10ps
+module tb_priority_encoder_8to3();
+  wire sum, cout; reg in0, in1, cin; // IO declare for test vector signals conn. to DUT
+  
+  mux2to1 M0 (.s(sum), .co(cout), .a(in0), .b(in1), .ci(cin)); // IO port connection at DUT
+  
+  initial begin // input test vector waveform generation
+    in0 = 1’b0;  in1 = 1’b0;  cin = 1’b0;        // (0,0,0)
+    #10;  cin = 1’b1;                            // (0,0,1)
+    #10;  in1 = 1’b1;                            // (0,1,1)
+    #10;  in1 = 1’b1;  in1 = 1’b0;  cin = 1’b0;  // (1,0,0)
+    #10;
+    $finish;    //simulation termination
+  end
+endmodule
+
+module priority_encoder_8to3 (
+  output s, co,
+  input a, b, ci
+  );
+  assign {co, s} = a + b + ci; //arithmetic expression
+endmodule
+```
 
 ## Module 8 : Verilog Modeling State Machine
 
